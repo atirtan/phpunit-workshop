@@ -1,0 +1,36 @@
+{
+  "type": "library",
+  "license": "proprietary",
+  "minimum-stability": "stable",
+  "name": "root/code",
+  "require": {
+    "php": "8",
+    "guzzlehttp/guzzle": "^7.3.0",
+    "monolog/monolog": "^2.2.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5.2",
+    "infection/infection": "^0.23.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Workshop\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "WorkshopTest\\": "test/"
+    }
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit --no-coverage",
+    "test-coverage": [
+      "./vendor/bin/phpunit",
+      "MdrSkeletonTest\\CoverageHelper::assertFullCoverage"
+    ],
+    "test-infection": [
+      "Composer\\Config::disableProcessTimeout",
+      "./vendor/bin/infection --threads=$(( $(nproc --all) - 1 )) --no-progress --coverage=data/build-output/"
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# this is for devs only ;)
+# it does not get shipped to testing/production
+
+case "$1" in
+"build")
+  # add the current user to the "nogroup" as defined in the Dockerfile
+  if ! (groups $USER | grep nogroup); then
+    echo "Adding current user to 'nogroup'"
+    sudo usermod -a -G nogroup $USER
+  fi
+
+  if [ ! -d "vendor" ]; then
+    # in case the vendor folder doesn't exist (which is the case on the first run), create it
+    mkdir vendor
+  fi
+
+  # ensure permissions on composer actions
+  sudo chmod 777 -R vendor
+  sudo chmod 777 composer.lock
+  sudo chmod 777 -R ~/.composer/cache
+  sudo chmod 777 -R data/cache/
+  sudo chmod 777 -R data/build-output/
+
+  # build the containers
+  docker build -t php-unit-tests .
+  ;;
+
+*)
+  echo "You need to specify an action."
+  echo ""
+  echo "Available actions are:"
+  echo "- ./bin/docker build          starts the containers"
+  echo ""
+  exit 1
+  ;;
+esac
